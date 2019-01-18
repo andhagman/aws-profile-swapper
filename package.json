@@ -1,0 +1,32 @@
+{
+  "name": "aws-profile-swapper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andhagman/aws-profile-swapper.git"
+  },
+  "keywords": [
+    "AWS",
+    "Profile",
+    "Role",
+    "Swap",
+    "Switch",
+    "Switcher"
+  ],
+  "author": "Andreas Hagman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andhagman/aws-profile-swapper/issues"
+  },
+  "homepage": "https://github.com/andhagman/aws-profile-swapper#readme",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "figlet": "^1.2.1",
+    "inquirer": "^6.2.1"
+  }
+}
