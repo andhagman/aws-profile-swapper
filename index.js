@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const program = require('commander');
 const chalk = require('chalk');
 const shell = require('shelljs');
@@ -40,6 +42,7 @@ const switchProfile = async () => {
         if (Boolean(mfa_serial.stdout)) {
             await mfaAuth(mfa_serial.stdout.replace(emtpylineRegex, ''));
         }
+
     } else if (Boolean(role_arn.stdout)) {
         await assumeRole(role_arn.stdout.replace(emtpylineRegex, ''));
     } else {
