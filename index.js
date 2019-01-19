@@ -1,19 +1,15 @@
 const program = require('commander');
 const chalk = require('chalk');
 const shell = require('shelljs');
-var inquirer = require('inquirer');
+const inquirer = require('inquirer');
 
 shell.config.silent = true;
-const home = process.env['HOME']
-const platform = process.platform;
 
 const emtpylineRegex = /\r?\n|\r/;
 
 program
     .version('0.1.0')
     .option('-p, --profile', 'Name of the AWS profile')
-    .command('configure', 'Create a new profile in ./aws/credentials')
-    .command('setenv', 'Export ')
     .parse(process.argv);
 
 if (!program.profile) {
@@ -103,5 +99,14 @@ const mfaAuth = async (mfa_serial) => {
 }
 
 
-switchProfile().then();
+
+
+switchProfile()
+    .then()
+    .catch(err => {
+        console.log(chalk.red({
+            error: err.message,
+            message: 'Please report issues at https://github.com/andhagman/aws-profile-swapper/issues'
+        }))
+    });
 
