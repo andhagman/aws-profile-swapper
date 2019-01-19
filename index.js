@@ -3,7 +3,7 @@ const chalk = require('chalk');
 const shell = require('shelljs');
 var inquirer = require('inquirer');
 
-
+shell.config.silent = true;
 const home = process.env['HOME']
 const platform = process.platform;
 
@@ -13,7 +13,7 @@ program
     .version('0.1.0')
     .option('-p, --profile', 'Name of the AWS profile')
     .command('configure', 'Create a new profile in ./aws/credentials')
-    .command('setenv', 'Set ')
+    .command('setenv', 'Export ')
     .parse(process.argv);
 
 if (!program.profile) {
@@ -23,14 +23,14 @@ if (!program.profile) {
 const inputProfile = program.args[0];
 
 const switchProfile = async () => {
-    const role_arn = shell.exec(`aws configure get role_arn --profile ${inputProfile}`, { silent: true });
-    const key_exists = shell.exec(`aws configure get aws_access_key_id --profile ${inputProfile}`, { silent: true });
-    const mfa_serial = shell.exec(`aws configure get mfa_serial --profile ${inputProfile}`, { silent: true });
+    const role_arn = shell.exec(`aws configure get role_arn --profile ${inputProfile}`);
+    const key_exists = shell.exec(`aws configure get aws_access_key_id --profile ${inputProfile}`);
+    const mfa_serial = shell.exec(`aws configure get mfa_serial --profile ${inputProfile}`);
     if (Boolean(key_exists.stdout)) {
-        const aws_access_key_id = shell.exec(`aws configure get aws_access_key_id --profile ${inputProfile}`, { silent: false }).stdout.replace(emtpylineRegex, '');
-        const aws_secret_access_key = shell.exec(`aws configure get aws_secret_access_key --profile ${inputProfile}`, { silent: false }).stdout.replace(emtpylineRegex, '');;
-        const session_token = shell.exec(`aws configure get aws_session_token --profile ${inputProfile}`, { silent: false }).stdout.replace(emtpylineRegex, '');;
-        const region = shell.exec(`aws configure get region --profile ${inputProfile}`, { silent: false }).stdout.replace(emtpylineRegex, '');;
+        const aws_access_key_id = shell.exec(`aws configure get aws_access_key_id --profile ${inputProfile}`).stdout.replace(emtpylineRegex, '');
+        const aws_secret_access_key = shell.exec(`aws configure get aws_secret_access_key --profile ${inputProfile}`).stdout.replace(emtpylineRegex, '');;
+        const session_token = shell.exec(`aws configure get aws_session_token --profile ${inputProfile}`).stdout.replace(emtpylineRegex, '');;
+        const region = shell.exec(`aws configure get region --profile ${inputProfile}`).stdout.replace(emtpylineRegex, '');;
 
         shell.exec(`aws configure set aws_access_key_id ${aws_access_key_id}`)
         shell.exec(`aws configure set aws_secret_access_key ${aws_secret_access_key}`)
@@ -52,10 +52,10 @@ const switchProfile = async () => {
 }
 
 const assumeRole = async (role_arn) => {
-    const source_profile = shell.exec(`aws configure get source_profile --profile "${inputProfile}"`, { silent: true }).stdout.replace(emtpylineRegex, '');
-    const role_session_name = shell.exec(`aws iam get-user --query User.UserName --output text --profile "${source_profile}"`, { silent: true }).stdout.replace(emtpylineRegex, '');
-    const mfa_serial = shell.exec(`aws configure get mfa_serial --profile "${source_profile}"`, { silent: true }).stdout.replace(emtpylineRegex, '');
-    console.log(role_arn)
+    const source_profile = shell.exec(`aws configure get source_profile --profile "${inputProfile}"`).stdout.replace(emtpylineRegex, '');
+    const role_session_name = shell.exec(`aws iam get-user --query User.UserName --output text --profile "${source_profile}"`).stdout.replace(emtpylineRegex, '');
+    const mfa_serial = shell.exec(`aws configure get mfa_serial --profile "${source_profile}"`).stdout.replace(emtpylineRegex, '');
+
     let credentials_raw;
     if (mfa_serial) {
         const { mfa_token } = await inquirer.prompt([
@@ -87,9 +87,9 @@ const mfaAuth = async (mfa_serial) => {
             name: "mfa_token"
         }
     ]);
-    const credentials_raw = shell.exec(`aws sts get-session-token --query Credentials.[AccessKeyId,SecretAccessKey,SessionToken] --serial-number "${mfa_serial}" --token-code "${mfa_token}" --profile ${inputProfile} --output json`, { silent: true });
+    const credentials_raw = shell.exec(`aws sts get-session-token --query Credentials.[AccessKeyId,SecretAccessKey,SessionToken] --serial-number "${mfa_serial}" --token-code "${mfa_token}" --profile ${inputProfile} --output json`);
     if (credentials_raw.stdout) {
-        const credentials = JSON.parse(credentials_raw);
+        const credentials = JSON.parse(credentials_raw.stdout);
         shell.exec(`aws configure set default.aws_access_key_id "${credentials[0]}"`)
         shell.exec(`aws configure set default.aws_secret_access_key "${credentials[1]}"`);
         shell.exec(`aws configure set default.aws_session_token "${credentials[2]}"`);
