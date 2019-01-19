@@ -71,7 +71,7 @@ const assumeRole = async (role_arn) => {
         shell.exec(`aws configure set default.aws_access_key_id "${credentials[0]}"`);
         shell.exec(`aws configure set default.aws_secret_access_key "${credentials[1]}"`);
         shell.exec(`aws configure set default.aws_session_token "${credentials[2]}"`);
-        console.log(chalk.green(`Enabled session for profile ${inputProfile} as default and ${inputProfile}`));
+        console.log(chalk.green(`Enabled session for profile ${inputProfile}`));
     }
 };
 
