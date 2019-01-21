@@ -37,7 +37,7 @@ module.exports = async (profile) => {
     }
 }
 
-const assumeRole = async (inputProfile, role_arn) => {
+const assumeRole = async (role_arn) => {
     const source_profile = shell.exec(`aws configure get source_profile --profile "${inputProfile}"`).stdout.replace(emtpylineRegex, '');
     const role_session_name = shell.exec(`aws iam get-user --query User.UserName --output text --profile "${source_profile}"`).stdout.replace(emtpylineRegex, '');
     const mfa_serial = shell.exec(`aws configure get mfa_serial --profile "${source_profile}"`).stdout.replace(emtpylineRegex, '');
